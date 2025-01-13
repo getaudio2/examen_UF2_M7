@@ -34,6 +34,16 @@ def insert_user(user):
     except(Exception, pg.Error) as error:
         print("Error: ", error)
 
+def user_schema(user) -> dict:
+    return {
+        "Nombre": user[0],
+        "Apellido": user[1], # Aquí user[2] y user[3] serían password e email que son datos sensibles
+        "Dirección": user[4],
+        "Código postal": user[5],
+        "Descripción": user[6],
+        "Edad": user[7]
+    }
+
 def create_table_users():
     try:
         conn = create_connection()
