@@ -21,6 +21,10 @@ async def add_user(user: Form):
     insert_user(user)
     return {"usuari": user}
 
+@app.get("/users/")
+async def get_user():
+    return user_schema(get_user_from_db())
+
 def insert_user(user):
     try:
         conn = create_connection()
@@ -33,8 +37,23 @@ def insert_user(user):
         conn.commit()
     except(Exception, pg.Error) as error:
         print("Error: ", error)
+def get_user_from_db():
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
 
+        query = "SELECT * FROM USUARIS;"
+
+        cursor.execute(query,)
+        conn.commit()
+
+        usuari = cursor.fetchone()
+        return usuari
+
+    except(Exception, pg.Error) as error:
+        print("Error: ", error)
 def user_schema(user) -> dict:
+    """
     return {
         "Nombre": user[0],
         "Apellido": user[1], # Aquí user[2] y user[3] serían password e email que son datos sensibles
@@ -42,6 +61,16 @@ def user_schema(user) -> dict:
         "Código postal": user[5],
         "Descripción": user[6],
         "Edad": user[7]
+    }
+    """
+    return {
+        "Nombre": user[0],
+        "Apellido": user[1], # Aquí user[2] y user[3] serían password e email que son datos sensibles
+        "Descripción": user[3],
+        "Curso": user[4],
+        "Año": user[5],
+        "Dirección": user[6],
+        "Código Postal": user[7]
     }
 
 def create_table_users():
