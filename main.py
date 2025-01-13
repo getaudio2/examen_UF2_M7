@@ -1,12 +1,24 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+class Form(BaseModel):
+    Nombre: str
+    Apellido: str
+    Correo_electronico: str
+    Descripcion: str | None = None
+    Curso: int
+    Ano: int
+    Direccion: str
+    Codigo_postal: int | None = None
+    Password: str
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
+
+
+
+
+
+
+
+
