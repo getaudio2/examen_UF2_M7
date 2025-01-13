@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
+import psycopg2 as pg
+from connection import create_connection
 
 app = FastAPI()
 
@@ -14,8 +16,47 @@ class Form(BaseModel):
     Codigo_postal: int | None = None
     Password: str
 
+@app.post("/insert/user")
+async def add_user(user: Form):
+    insert_user(user)
+    return {"usuari": user}
 
+def insert_user(user):
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
 
+        query = "INSERT INTO USUARIS(Nombre, Apellido, Email, Descripcion, Curso, Ano, Direccion, Codigo_Postal, Password) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        values = (user.Nombre, user.Apellido, user.Correo_electronico, user.Descripcion, user.Curso, user.Ano, user.Direccion, user.Codigo_postal, user.Password)
+
+        cursor.execute(query, values,)
+        conn.commit()
+    except(Exception, pg.Error) as error:
+        print("Error: ", error)
+
+def create_table_users():
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+
+        query = """
+                CREATE TABLE USUARIS(
+                    Nombre VARCHAR,
+                    Apellido VARCHAR,
+                    Email VARCHAR,
+                    Descripcion VARCHAR,
+                    Curso INT,
+                    Ano INT,
+                    Direccion VARCHAR,
+                    Codigo_Postal INT,
+                    Password VARCHAR
+                );
+        """
+        cursor.execute(query)
+        conn.commit()
+    except(Exception, pg.Error) as error:
+        print("Error: ", error)
+create_table_users()
 
 
 
